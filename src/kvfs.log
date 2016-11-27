@@ -1,0 +1,44 @@
+
+kvfs_init()
+    conn:
+    proto_major = 7
+    proto_minor = 23
+    async_read = 1
+    max_write = 131072
+    max_readahead = 131072
+    capable = 00000ffb
+    want = 00000010
+    max_background = 0
+    congestion_threshold = 0
+    context:
+    fuse = 00a144e0
+    uid = 0
+    gid = 0
+    pid = 0
+    private_data = 00a13010
+    logfile = 00a14040
+    rootdir = /home/reva/fusemount
+    umask = 00000
+kvfs_getattr_impl 3817cedc0f64e53325cfc4665db1f668
+reading another file
+kvfs_getattr_impl e1b26379a002c5193694f34734931754
+reading another file
+kvfs_getattr_impl fd4470862b13f32bfcc3659aa8dc4082
+reading another file
+kvfs_mkdir_impl fd4470862b13f32bfcc3659aa8dc4082
+creating the first directory
+32
+copied directory name fd4470862b13f32bfcc3659aa8dc4082
+copied uid gid 1000 1000
+kvfs_getattr_impl fd4470862b13f32bfcc3659aa8dc4082
+reading another file
+found a file node 
+found uid gid 1000 1000kvfs_getattr_impl fd4470862b13f32bfcc3659aa8dc4082
+reading another file
+found a file node 
+found uid gid 1000 1000kvfs_rmdir_impl fd4470862b13f32bfcc3659aa8dc4082
+removing the head node which is a direcoty
+kvfs_getattr_impl fd4470862b13f32bfcc3659aa8dc4082
+reading another file
+
+kvfs_destroy(userdata=0x00a13010)
