@@ -684,11 +684,11 @@ int kvfs_statfs_impl(const char *path, struct statvfs *statv)
 {
 	log_msg("kvfs_statfs_impl %s\n",path);
 	statv->f_frsize = 1024;
-	statv->f_blocks = 4;
+	statv->f_blocks = 1024*1024;
 
 
-	statv->f_bfree = 4-getsize()/1024;
-	statv->f_bavail = 4-getsize()/1024;
+	statv->f_bfree = 1024*1024-getsize()/1024;
+	statv->f_bavail = 1024*1024-getsize()/1024;
 	return 0;
 }
 
@@ -880,8 +880,66 @@ int kvfs_fsyncdir_impl(const char *path, int datasync, struct fuse_file_info *fi
 
 int kvfs_access_impl(const char *path, int mask)
 {
-    log_msg("kvfs_access_impl %s\n",path);
-    return 0;
+	log_msg("kvfs_access_impl %s mask %d\n",path,mask);
+	int read=1,write=1,execute=1;
+	filenode *searched= search(path);
+	if (searched == NULL)
+	{
+		log_msg("file doesnot exist\n");
+		return -ENOENT;
+	}
+	
+	if (mask & (1 << 2))
+	{
+		log_msg("looking for read permission \n");
+		if (searched->metadata.st_mode & (S_IRUSR | S_IRGRP | S_IROTH))
+		{
+			log_msg("read permitted \n");
+		}
+		else
+		{
+			read = 0;
+		}
+	}
+
+
+	if (mask & (1 << 1))
+	{
+
+		log_msg("looking for write permission \n");
+		if (searched->metadata.st_mode & (S_IWUSR | S_IWGRP | S_IWOTH))
+		{
+			log_msg("write permitted \n");
+		}
+		else
+		{
+			write = 0;
+		}
+		
+	}
+
+	if (mask & 1)
+	{
+		log_msg("looking for execute permission \n");
+		if (searched->metadata.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))
+		{
+			log_msg("execute permitted \n");
+		}
+		else
+		{
+			execute = 0;
+		}
+		
+	}
+
+	if (read && write && execute)
+	{
+		return 0;
+	}
+	else
+	{
+		return -EACCES;
+	}
 }
 
 /**
