@@ -11,34 +11,122 @@ kvfs_init()
     max_background = 0
     congestion_threshold = 0
     context:
-    fuse = 00a144e0
+    fuse = 022df4e0
     uid = 0
     gid = 0
     pid = 0
-    private_data = 00a13010
-    logfile = 00a14040
-    rootdir = /home/reva/fusemount
+    private_data = 022de010
+    logfile = 022df040
+    rootdir = /home/reva/fuseroot
     umask = 00000
+    kvfs_get attr path:  path = "/.Trash"
 kvfs_getattr_impl 3817cedc0f64e53325cfc4665db1f668
 reading another file
+could not found any
+    kvfs_get attr path:  path = "/.Trash-1000"
 kvfs_getattr_impl e1b26379a002c5193694f34734931754
 reading another file
-kvfs_getattr_impl fd4470862b13f32bfcc3659aa8dc4082
+could not found any
+    kvfs_get attr path:  path = "/"
+kvfs_getattr_impl 6666cd76f96956469e7be39d750cc7d9
+get attr of root directory
+kvfs_statfs_impl 6666cd76f96956469e7be39d750cc7d9
+file system size 0 
+file system size 0 
+    kvfs_get attr path:  path = "/f1"
+kvfs_getattr_impl b990fc981e9300f142e459f0d7e631d5
 reading another file
-kvfs_mkdir_impl fd4470862b13f32bfcc3659aa8dc4082
-creating the first directory
+could not found any
+kvfs_mknod_impl b990fc981e9300f142e459f0d7e631d5
+creating the first file
 32
-copied directory name fd4470862b13f32bfcc3659aa8dc4082
+copied filename b990fc981e9300f142e459f0d7e631d5
 copied uid gid 1000 1000
-kvfs_getattr_impl fd4470862b13f32bfcc3659aa8dc4082
+    kvfs_get attr path:  path = "/f1"
+kvfs_getattr_impl b990fc981e9300f142e459f0d7e631d5
 reading another file
 found a file node 
-found uid gid 1000 1000kvfs_getattr_impl fd4470862b13f32bfcc3659aa8dc4082
-reading another file
-found a file node 
-found uid gid 1000 1000kvfs_rmdir_impl fd4470862b13f32bfcc3659aa8dc4082
-removing the head node which is a direcoty
-kvfs_getattr_impl fd4470862b13f32bfcc3659aa8dc4082
-reading another file
+found uid gid 1000 1000kvfs_open_impl b990fc981e9300f142e459f0d7e631d5
 
-kvfs_destroy(userdata=0x00a13010)
+kvfs_flush(path="b990fc981e9300f142e459f0d7e631d5", fi=0x29d9ed10)
+    fi:
+    flags = 0x00000000
+    fh_old = 0x00000000
+    writepage = 0
+    direct_io = 0
+    keep_cache = 0
+    fh = 0x0000000000000000
+    lock_owner = 0x2f7e8307a37b8bcb
+kvfs_write_impl b990fc981e9300f142e459f0d7e631d5
+size_t 1170  off_t 0
+file already existing,overwriting and updating
+copied size 1170
+copied content /*
+  Copyright (C) 2016 Hung-Wei Tseng, Ph.D. <hungwei_tseng@ncsu.edu>
+
+  This program can be distributed under the terms of the GNU GPLv3.
+  See the file COPYING.
+
+  There are a couple of symbols that need to be #defined before
+  #including all the headers.
+*/
+
+#ifndef _PARAMS_H_
+#define _PARAMS_H_
+
+// The FUSE API has been changed a number of times.  So, our code
+// needs to define the version of the API that we assume.  As of this
+// writing, the most current API version is 26
+#define FUSE_USE_VERSION 26
+
+// need this to get pwrite().  I have to use setvbuf() instead of
+// setlinebuf() later in consequence.
+#define _XOPEN_SOURCE 500
+
+// maintain bbfs state in here
+#include <limits.h>
+#include <stdio.h>
+struct kvfs_state {
+    FILE *logfile;
+    char *rootdir;
+};
+#define KVFS_DATA ((struct kvfs_state *) fuse_get_context()->private_data)
+
+#endif
+
+#include <ctype.h>
+#include <dirent.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <fuse.h>
+#include <libgen.h>
+#include <limits.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/types.h>
+
+#ifdef HAVE_SYS_XATTR_H
+#include <sys/xattr.h>
+#endif
+
+#include "log.h"
+
+
+kvfs_flush(path="b990fc981e9300f142e459f0d7e631d5", fi=0x2a59fd10)
+    fi:
+    flags = 0x00000000
+    fh_old = 0x00000000
+    writepage = 0
+    direct_io = 0
+    keep_cache = 0
+    fh = 0x0000000000000000
+    lock_owner = 0x2f7e8307a37b8bcb
+kvfs_release_impl b990fc981e9300f142e459f0d7e631d5
+    kvfs_get attr path:  path = "/"
+kvfs_getattr_impl 6666cd76f96956469e7be39d750cc7d9
+get attr of root directory
+kvfs_statfs_impl 6666cd76f96956469e7be39d750cc7d9
+file system size 1170 
+file system size 1170 

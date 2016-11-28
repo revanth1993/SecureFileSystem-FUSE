@@ -44,6 +44,21 @@ filenode *head = NULL;
  * ignored.  The 'st_ino' field is ignored except if the 'use_ino'
  * mount option is given.
  */
+
+unsigned long long int getsize()
+{
+	filenode *temp=head;
+	unsigned long long int size=0;
+	while(temp!=NULL)
+	{
+		size = size+temp->filesize;
+		temp = temp->next;
+	}	
+	log_msg("file system size %llu \n",size);	
+
+	return size;
+}
+
 filenode * search(const char *path)
 {
 	filenode *temp = head;
@@ -63,7 +78,6 @@ int kvfs_getattr_impl(const char *path, struct stat *statbuf)
 {
 	
     log_msg("kvfs_getattr_impl %s\n",path);
-    	int res = 0;
 	if (strcmp(str2md5("/", 1),path) == 0)
 	{
 		log_msg("get attr of root directory\n");
@@ -71,6 +85,7 @@ int kvfs_getattr_impl(const char *path, struct stat *statbuf)
 		statbuf->st_mode = S_IFDIR | 0777;
 		statbuf->st_nlink = 1;
 		statbuf->st_size =4096;	
+
 	}
 	else
 	{
@@ -79,14 +94,16 @@ int kvfs_getattr_impl(const char *path, struct stat *statbuf)
 		filenode *searched = search(path);	
                 if (searched==NULL)
 		{
+			log_msg("could not found any\n");			
 			return -ENOENT;				
 		}
-		while(searched->hardlink!=NULL)
+		else if (searched !=NULL)
 		{
-			searched = searched->hardlink;
-		}
-		if (searched !=NULL)
-		{
+			while(searched->hardlink!=NULL)
+			{
+				searched = searched->hardlink;
+			}
+		
 			log_msg("found a file node \n");
 			memset(statbuf, 0, sizeof(struct stat));
 			statbuf->st_mode = searched->metadata.st_mode;
@@ -99,13 +116,8 @@ int kvfs_getattr_impl(const char *path, struct stat *statbuf)
 			statbuf->st_mtime = head->metadata.st_mtime;
 			log_msg("found uid gid %d %d",statbuf->st_uid,statbuf->st_gid);
 		}
-		else
-		{
-			log_msg("could not found any\n");			
-			return -ENOENT;
-		}
 	}
-	return res;
+	return 0;
 }
 
 /** Read the target of a symbolic link
@@ -639,6 +651,7 @@ int kvfs_write_impl(const char *path, const char *buf, size_t size, off_t offset
 			log_msg("copied size %d\n",searched->filesize);
 			log_msg("copied content %s\n",searched->data);			 
 			searched->metadata.st_mtime = (time_t)time(NULL);
+			return size;
 		
 		}
 		else
@@ -651,6 +664,7 @@ int kvfs_write_impl(const char *path, const char *buf, size_t size, off_t offset
 			searched->metadata.st_mtime = (time_t)time(NULL);
 			log_msg("updated size %d\n",searched->filesize);
 			log_msg("updated content %s\n",searched->data);			
+			return size;
 		}
 		
 	}
@@ -668,8 +682,14 @@ int kvfs_write_impl(const char *path, const char *buf, size_t size, off_t offset
  */
 int kvfs_statfs_impl(const char *path, struct statvfs *statv)
 {
-    log_msg("kvfs_statfs_impl %s\n",path);
-    return 0;
+	log_msg("kvfs_statfs_impl %s\n",path);
+	statv->f_frsize = 1024;
+	statv->f_blocks = 4;
+
+
+	statv->f_bfree = 4-getsize()/1024;
+	statv->f_bavail = 4-getsize()/1024;
+	return 0;
 }
 
 /** Possibly flush cached data
@@ -823,6 +843,7 @@ int kvfs_readdir_impl(const char *path, void *buf, fuse_fill_dir_t filler, off_t
 		while(list!=NULL)
 		{
 			filler(buf,list->filename,NULL,0);
+			log_msg("listing file %s\n",list->filename);
 			list=list->next;
 		}
 		
@@ -911,6 +932,49 @@ int kvfs_ftruncate_impl(const char *path, off_t offset, struct fuse_file_info *f
 int kvfs_fgetattr_impl(const char *path, struct stat *statbuf, struct fuse_file_info *fi)
 {
     log_msg("kvfs_fgetattr_impl %s\n",path);
+
+	if (strcmp(str2md5("/", 1),path) == 0)
+	{
+		log_msg("get attr of root directory\n");
+		memset(statbuf, 0, sizeof(struct stat));
+		statbuf->st_mode = S_IFDIR | 0777;
+		statbuf->st_nlink = 1;
+		statbuf->st_size =4096;	
+	}
+	else
+	{
+		
+		log_msg("reading another file\n");
+		filenode *searched = search(path);	
+                if (searched==NULL)
+		{
+			return -ENOENT;				
+		}
+		while(searched->hardlink!=NULL)
+		{
+			searched = searched->hardlink;
+		}
+		if (searched !=NULL)
+		{
+			log_msg("found a file node \n");
+			memset(statbuf, 0, sizeof(struct stat));
+			statbuf->st_mode = searched->metadata.st_mode;
+			statbuf->st_nlink = searched->metadata.st_nlink;
+			statbuf->st_size = searched->filesize;
+			statbuf->st_uid = searched->metadata.st_uid;
+			statbuf->st_gid = searched->metadata.st_gid;
+			statbuf->st_ctime = head->metadata.st_ctime;
+			statbuf->st_atime = head->metadata.st_atime;
+			statbuf->st_mtime = head->metadata.st_mtime;
+			log_msg("found uid gid %d %d",statbuf->st_uid,statbuf->st_gid);
+		}
+		else
+		{
+			log_msg("could not found any\n");			
+			return -ENOENT;
+		}
+	}
+
     return 0;
 }
 
