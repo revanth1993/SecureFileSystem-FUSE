@@ -30,6 +30,7 @@ typedef struct filestructure{
 typedef struct symlink{
 	char *filename;
 	filenode *file;
+	struct symlinknode* next;
 }symlinknode;
 
 filenode *head = NULL;
@@ -972,6 +973,16 @@ int kvfs_access_impl(const char *path, int mask)
 int kvfs_ftruncate_impl(const char *path, off_t offset, struct fuse_file_info *fi)
 {
     log_msg("kvfs_ftruncate_impl %s\n",path);
+	filenode *searched;
+	searched = search(path);
+	if(searched!=NULL)
+	{
+		log_msg("truncating the file\n");
+		log_msg("old file size %d data %s\n",searched->filesize,searched->data);
+		searched->data = (char *)realloc(searched->data,offset);
+		searched->filesize = offset;
+		log_msg("new file size %d data %s\n",searched->filesize,searched->data);
+	}
     return 0;
 }
 

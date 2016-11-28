@@ -11,12 +11,12 @@ kvfs_init()
     max_background = 0
     congestion_threshold = 0
     context:
-    fuse = 0256b4e0
+    fuse = 01fa74e0
     uid = 0
     gid = 0
     pid = 0
-    private_data = 0256a010
-    logfile = 0256b040
+    private_data = 01fa6010
+    logfile = 01fa7040
     rootdir = /home/reva/fuseroot
     umask = 00000
     kvfs_get attr path:  path = "/.Trash"
@@ -42,7 +42,7 @@ reading another file
 found a file node 
 found uid gid 1000 1000kvfs_open_impl b990fc981e9300f142e459f0d7e631d5
 
-kvfs_flush(path="b990fc981e9300f142e459f0d7e631d5", fi=0x0d76cd10)
+kvfs_flush(path="b990fc981e9300f142e459f0d7e631d5", fi=0x8f0ffd10)
     fi:
     flags = 0x00000000
     fh_old = 0x00000000
@@ -50,7 +50,7 @@ kvfs_flush(path="b990fc981e9300f142e459f0d7e631d5", fi=0x0d76cd10)
     direct_io = 0
     keep_cache = 0
     fh = 0x0000000000000000
-    lock_owner = 0xe58956f51877c81b
+    lock_owner = 0xa3e6c35d734165b2
 kvfs_write_impl b990fc981e9300f142e459f0d7e631d5
 size_t 4  off_t 0
 file already existing,overwriting and updating
@@ -58,7 +58,7 @@ copied size 4
 copied content awd
 
 
-kvfs_flush(path="b990fc981e9300f142e459f0d7e631d5", fi=0x0df6dd10)
+kvfs_flush(path="b990fc981e9300f142e459f0d7e631d5", fi=0x8f900d10)
     fi:
     flags = 0x00000000
     fh_old = 0x00000000
@@ -66,23 +66,70 @@ kvfs_flush(path="b990fc981e9300f142e459f0d7e631d5", fi=0x0df6dd10)
     direct_io = 0
     keep_cache = 0
     fh = 0x0000000000000000
-    lock_owner = 0xe58956f51877c81b
+    lock_owner = 0xa3e6c35d734165b2
 kvfs_release_impl b990fc981e9300f142e459f0d7e631d5
-    kvfs_get attr path:  path = "/f1"
-kvfs_getattr_impl b990fc981e9300f142e459f0d7e631d5
+    kvfs_get attr path:  path = "/"
+kvfs_getattr_impl 6666cd76f96956469e7be39d750cc7d9
+get attr of root directory
+    kvfs_get attr path:  path = "/"
+kvfs_getattr_impl 6666cd76f96956469e7be39d750cc7d9
+get attr of root directory
+    kvfs_get attr path:  path = "/f2"
+kvfs_getattr_impl 670319d04359d193eeaf59863722d053
+reading another file
+could not found any
+    kvfs_get attr path:  path = "/f2"
+kvfs_getattr_impl 670319d04359d193eeaf59863722d053
+reading another file
+could not found any
+kvfs_symlink_impl 1d355951277c3c0d998408a7ca200cd5
+    kvfs_get attr path:  path = "/f2"
+kvfs_getattr_impl 670319d04359d193eeaf59863722d053
+reading another file
+could not found any
+    kvfs_get attr path:  path = "/f2"
+kvfs_getattr_impl 670319d04359d193eeaf59863722d053
+reading another file
+could not found any
+kvfs_mknod_impl 670319d04359d193eeaf59863722d053
+creating new file
+32
+copied filename 670319d04359d193eeaf59863722d053
+    kvfs_get attr path:  path = "/f2"
+kvfs_getattr_impl 670319d04359d193eeaf59863722d053
 reading another file
 found a file node 
-found uid gid 1000 1000    kvfs_fullpath:  path = "/f1" 6
-kvfs_access_impl b990fc981e9300f142e459f0d7e631d5 mask 6
-looking for read permission 
-read permitted 
-looking for write permission 
-write permitted 
-    kvfs_get attr path:  path = "/f1"
-kvfs_getattr_impl b990fc981e9300f142e459f0d7e631d5
+found uid gid 1000 1000kvfs_open_impl 670319d04359d193eeaf59863722d053
+
+kvfs_flush(path="670319d04359d193eeaf59863722d053", fi=0x8f900d10)
+    fi:
+    flags = 0x00000000
+    fh_old = 0x00000000
+    writepage = 0
+    direct_io = 0
+    keep_cache = 0
+    fh = 0x0000000000000000
+    lock_owner = 0xa3e6c35d734165b2
+kvfs_write_impl 670319d04359d193eeaf59863722d053
+size_t 4  off_t 0
+file already existing,overwriting and updating
+copied size 4
+copied content awd
+
+
+kvfs_flush(path="670319d04359d193eeaf59863722d053", fi=0x8f900d10)
+    fi:
+    flags = 0x00000000
+    fh_old = 0x00000000
+    writepage = 0
+    direct_io = 0
+    keep_cache = 0
+    fh = 0x0000000000000000
+    lock_owner = 0xa3e6c35d734165b2
+kvfs_release_impl 670319d04359d193eeaf59863722d053
+    kvfs_get attr path:  path = "/f2"
+kvfs_getattr_impl 670319d04359d193eeaf59863722d053
 reading another file
 found a file node 
-found uid gid 1000 1000    kvfs_fullpath:  path = "/f1" 4
-kvfs_access_impl b990fc981e9300f142e459f0d7e631d5 mask 4
-looking for read permission 
-read permitted 
+found uid gid 1000 1000
+kvfs_destroy(userdata=0x01fa6010)
